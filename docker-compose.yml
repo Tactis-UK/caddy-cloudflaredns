@@ -4,12 +4,13 @@ services:
     image: tactis/caddy-cloudflaredns:latest
     restart: unless-stopped
     environment:
-      CF_API_TOKEN: 123
+      CF_API_TOKEN: $CF_API_TOKEN
     ports:
       - 80:80
       - 443:443
     volumes:
       - caddy_data:/data
+      - /etc/caddy/Caddyfile:/etc/caddy/Caddyfile
 volumes:
   caddy_data:
     driver: local
