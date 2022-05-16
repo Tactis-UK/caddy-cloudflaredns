@@ -8,10 +8,32 @@
 # this machine's public IP, then replace ":80" below with your
 # domain name.
 
-example.com {
-        tls {
-                dns cloudflare {env.CF_API_TOKEN}
+{
+        email user@example.com
+        # Enable this to test using LetsEncrypt Staging
+        #acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+}
+
+(dns-conf) {
+        dns cloudflare {env.CF_API_TOKEN}
+        disable_http_challenge
+        disable_tlsalpn_challenge
+        resolvers 1.1.1.1:53
+}                                                                                  
+(tls) {
+        tls {                
+                issuer zerossl {
+                        import dns-conf
+                }
+                issuer acme {
+                        import dns-conf
+                }
         }
+}
+
+
+example.com {
+        import tls
         # Set this path to your site's directory.
         root * /usr/share/caddy
 
@@ -26,8 +48,14 @@ example.com {
 }
 
 reverse-proxy.example.com {
-        tls {
-                dns cloudflare {env.CF_API_TOKEN}
-        }
+        import tls
         reverse_proxy webserver:80
 }
+
+ip.example.com {
+        import tls
+        respond {http.request.remote.host}
+}
+
+# Refer to the Caddy docs for more information:
+# https://caddyserver.com/docs/caddyfile
