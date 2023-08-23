@@ -1,6 +1,7 @@
 version: "3"
 services:
-  mcx80: 
+  caddy: 
+    container_name: caddy
     image: tactis/caddy-cloudflaredns:latest
     restart: unless-stopped
     environment:
